@@ -1,0 +1,7 @@
+timm==0.4.5
+opencv-python
+tensorboard
+tqdm
+transformers
+datasets
+bayestorch
