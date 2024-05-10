@@ -16,7 +16,7 @@
 
 ```bash
 python train.py --task=COD  --uncer_method ganabp --ckpt {checkpoint_file}
-!python  test.py  --uncer_method ganabp  --task COD --ckpt {new_checkpoint_file}
+python  test.py  --uncer_method ganabp  --task COD --ckpt {new_checkpoint_file}
 ```
 
 ## Results
