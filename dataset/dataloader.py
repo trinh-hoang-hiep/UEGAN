@@ -135,7 +135,8 @@ class SalObjDatasetRGB(data.Dataset):
             x = transpose_np(x)
             return x
 
-
+        image = self.img_transform(image) #10 #14
+        gt = self.gt_transform(gt) #10 #14
         
         hr_coord, hr_rgb = to_pixel_samples(seg.contiguous())
 
