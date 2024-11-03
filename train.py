@@ -117,7 +117,7 @@ if __name__ == "__main__":
    
 
     
-    print(model)
+    #print(model)
     optimizer, scheduler = get_optim(option, model.parameters()) 
     schedule = StepLR(optimizer, step_size=1, gamma=gamma)
     if dis_model is not None: 
