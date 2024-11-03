@@ -152,6 +152,7 @@ def train_one_epoch(epoch, model_list, optimizer_list, train_loader, dataset_siz
                 memory_chunk=images.shape[-2]*images.shape[-1]
                 for i in range(0, images.shape[-2]*images.shape[-1], memory_chunk):###########################  32*32, 50176 = 224*224 , 384*384=147456
                     gen_res, log_priors = generator(img=images, z=z_noise, depth=depth,coord=pack['coord'][:, i:i+memory_chunk, :].to(device), cell=pack['cell'][:, i:i+memory_chunk, :]) #10 #14 #14... ###########################################svgd
+                    ####### lưu ý gen_res['sal_pre']=[torch.Size([3, 12, 1, 384, 384])]
                     gen_res=gen_res['sal_pre'][0].mean(dim=0)###############################svgd
                     gen_res=[gen_res]
                 gen_loss = 0 #10 #14
@@ -189,7 +190,11 @@ def train_one_epoch(epoch, model_list, optimizer_list, train_loader, dataset_siz
             pred_post=pred_post['sal_pre'][0].mean(dim=0)
             pred_post=[pred_post]
 
-                
+            loss2 = cal_loss(pred_post, gts, loss_fun)
+            #grad_v = torch.autograd.grad(loss2, outputs,retain_graph=True)[0]
+            reg = JacobianReg(n=-1)
+            
+            loss_jr = reg(images, pred_post[0])                  
 
             if option['task'].lower() == 'sod':
                 Dis_output = discriminator(torch.cat((images, torch.sigmoid(pred_post[0]).detach()), 1))
@@ -207,7 +212,7 @@ def train_one_epoch(epoch, model_list, optimizer_list, train_loader, dataset_siz
             elif option['task'].lower() == 'weak-rgb-sod':
                 supervised_loss = loss_fun(images=images, outputs=pred_post, gt=gts, masks=mask, grays=gray, model=generator)
             # ############################
-            loss_all = supervised_loss + opt.lamda_dis * loss_dis_output#####+uncertainty_ensemble_align*0.2#+0.01*loss_jr####*0.5###+0.1 * gal_loss##0.25##################################jacobian
+            loss_all = supervised_loss + opt.lamda_dis * loss_dis_output+0.01*loss_jr#####+uncertainty_ensemble_align*0.2#+0.01*loss_jr####*0.5###+0.1 * gal_loss##0.25##################################jacobian
 
 
             loss_all.backward()
