@@ -137,7 +137,7 @@ class SVGD(Optimizer):
             for param in params:
                 grad = param.grad
                 if grad is None:
-                    grad=0 #raise RuntimeError("Gradient of some parameters is None") #########fix none use param  self.fc = nn.Linear(2144,134) in concat_decoder ### List parameters that have grad=None none_grad_params = [(name, param) for name, param in model.named_parameters() if param.grad is None] # Output the parameters that have grad=None print("Parameters with grad=None after backward:") for name, param in none_grad_params: print(f"Parameter: {name}") 
+                    grad=0.0 #raise RuntimeError("Gradient of some parameters is None") #########fix none use param  self.fc = nn.Linear(2144,134) in concat_decoder ### List parameters that have grad=None none_grad_params = [(name, param) for name, param in model.named_parameters() if param.grad is None] # Output the parameters that have grad=None print("Parameters with grad=None after backward:") for name, param in none_grad_params: print(f"Parameter: {name}") 
                 particle_grads.append(grad)
             particle_grads = nn.utils.parameters_to_vector(particle_grads).reshape(
                 num_particles, -1
